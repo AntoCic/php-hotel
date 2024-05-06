@@ -52,6 +52,46 @@ $hotels = [
 
 <body>
     <h1>PHP HOTELS</h1>
+    <form action="" method="get">
+        <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+            <input type="radio" class="btn-check" name="parcheggio" id="parcheggioAny" value="any" <?php
+                                                                                                    if (isset($_GET['parcheggio'])) {
+                                                                                                        if ($_GET['parcheggio'] == 'any') {
+                                                                                                            echo 'checked';
+                                                                                                        }
+                                                                                                    } else {
+                                                                                                        echo 'checked';
+                                                                                                    }
+                                                                                                    ?>>
+            <label class="btn btn-outline-primary" for="parcheggioAny">TUTTI</label>
+
+            <input type="radio" class="btn-check" name="parcheggio" id="parcheggio1" value="1" <?php
+                                                                                                if (isset($_GET['parcheggio'])) {
+                                                                                                    if ($_GET['parcheggio'] == '1') {
+                                                                                                        echo 'checked';
+                                                                                                    }
+                                                                                                }
+                                                                                                ?>>
+            <label class="btn btn-outline-primary" for="parcheggio1">PARCHEGGIO INCLUSO</label>
+
+            <input type="radio" class="btn-check" name="parcheggio" id="parcheggio0" value="0" <?php
+                                                                                                if (isset($_GET['parcheggio'])) {
+                                                                                                    if ($_GET['parcheggio'] == '0') {
+                                                                                                        echo 'checked';
+                                                                                                    }
+                                                                                                }
+                                                                                                ?>>
+            <label class="btn btn-outline-primary" for="parcheggio0">PARCHEGGIO ESCLUSO</label>
+        </div>
+        <div class="input-group my-1">
+            <span class="input-group-text">Cerca per voto</span>
+            <input type="number" name="voto" class="form-control" placeholder="1-5" value="<?php echo $_GET['voto'] ?? ''; ?>">
+        </div>
+
+        <button type="submit" class="btn btn-success">INVIA</button>
+
+    </form>
+
 
     <table class="table">
         <thead>
@@ -71,7 +111,24 @@ $hotels = [
             foreach ($hotels as $hotel) {
                 echo "<tr>";
                 foreach ($hotel as $el) {
-                    echo "<td>$el</td>";
+                    if (isset($_GET['parcheggio']) && isset($_GET['voto'])) {
+                        $is_parking = false;
+                        $is_vote = false;
+
+                        if ($_GET['parcheggio'] == 'any' || $_GET['parcheggio'] == $hotel['parking']) {
+                            $is_parking = true;
+                        }
+
+                        if ($_GET['voto'] == '' || intval($_GET['voto']) <= $hotel['vote']) {
+                            $is_vote = true;
+                        }
+
+                        if ($is_parking && $is_vote) {
+                            echo "<td>$el</td>";
+                        }
+                    } else {
+                        echo "<td>$el</td>";
+                    }
                 };
 
                 echo "</tr>";
